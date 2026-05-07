@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Post Free Ad - AJK Wheels{% endblock %}
+{% block extra_head %}
+<style>
+.post-hero{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:40px 0;}
+.post-hero h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;}
+.post-hero p{color:#aaa;font-size:14px;margin-top:6px;}
+.post-layout{max-width:780px;margin:40px auto 60px;padding:0 20px;}
+.post-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:32px;}
+.type-toggle{display:flex;gap:0;border:2px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:30px;}
+.type-btn{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;border:none;background:transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.type-btn.active{background:var(--primary);color:#fff;}
+.type-btn:not(.active):hover{background:var(--surface2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.section-divider{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--secondary);margin:24px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--surface3);display:flex;align-items:center;gap:8px;}
+.submit-btn{width:100%;padding:15px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;}
+.submit-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.price-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+#priceDisplay{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--primary);margin-top:6px;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="post-hero">
+  <div class="container">
+    <h1><i class="fas fa-plus-circle" style="color:var(--primary)"></i> Post Your Ad for Free</h1>
+    <p>Reach thousands of buyers across Pakistan — completely free!</p>
+  </div>
+</div>
+
+<div class="post-layout">
+  {% if not session.user_id %}
+  <div class="flash warning" style="margin-bottom:20px">
+    <i class="fas fa-info-circle"></i>
+    Please <a href="{{ url_for('login') }}" style="font-weight:700;color:var(--primary)">login</a> or <a href="{{ url_for('register') }}" style="font-weight:700;color:var(--primary)">register</a> to post an ad.
+  </div>
+  {% endif %}
+
+  <div class="post-card">
+    <div class="type-toggle">
+      <button class="type-btn active" id="carBtn" onclick="switchType('car')"><i class="fas fa-car"></i> Car</button>
+      <button class="type-btn" id="bikeBtn" onclick="switchType('bike')"><i class="fas fa-motorcycle"></i> Bike / Motorcycle</button>
+    </div>
+
+    <form method="POST">
+      <input type="hidden" name="ad_type" id="adType" value="car">
+
+      <div class="section-divider"><i class="fas fa-info-circle" style="color:var(--primary)"></i> Basic Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Make *</label>
+          <select name="make" required>
+            <option value="">Select Make</option>
+            <div id="carMakes">
+              <option>Toyota</option><option>Honda</option><option>Suzuki</option>
+              <option>KIA</option><option>Hyundai</option><option>Changan</option>
+              <option>Proton</option><option>MG</option><option>Nissan</option>
+              <option>Daihatsu</option><option>Mitsubishi</option>
+            </div>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Model *</label>
+          <input type="text" name="model" placeholder="e.g. Corolla, Civic, Alto" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Year *</label>
+          <select name="year" required>
+            <option value="">Select Year</option>
+            {% for y in range(2025,2000,-1) %}<option>{{ y }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Condition *</label>
+          <select name="condition" required>
+            <option value="">Select</option>
+            <option>Used</option><option>New</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-divider"><i class="fas fa-cog" style="color:var(--primary)"></i> Technical Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Mileage (km)</label>
+          <input type="number" name="mileage" placeholder="e.g. 25000" min="0">
+        </div>
+        <div class="form-group">
+          <label>Engine CC</label>
+          <input type="number" name="engine_cc" placeholder="e.g. 1300" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fuel Type *</label>
+          <select name="fuel_type" required>
+            <option value="">Select</option>
+            <option>Petrol</option><option>Diesel</option><option>Hybrid</option><option>Electric</option><option>CNG</option>
+          </select>
+        </div>
+        <div class="form-group car-only">
+          <label>Transmission</label>
+          <select name="transmission">
+            <option value="">Select</option>
+            <option>Automatic</option><option>Manual</option><option>CVT</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Color</label>
+          <input type="text" name="color" placeholder="e.g. White, Black, Silver">
+        </div>
+        <div class="form-group">
+          <label>City *</label>
+          <select name="city" required>
+            <option value="">Select City</option>
+            <option>Lahore</option><option>Karachi</option><option>Islamabad</option>
+            <option>Rawalpindi</option><option>Faisalabad</option><option>Multan</option>
+            <option>Peshawar</option><option>Quetta</option><option>Sialkot</option><option>Gujranwala</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-divider"><i class="fas fa-tag" style="color:var(--primary)"></i> Pricing</div>
+      <div class="form-group">
+        <label>Price (PKR) *</label>
+        <input type="number" name="price" id="priceInput" placeholder="Enter price in PKR" required min="1" oninput="updatePrice(this.value)">
+        <div class="price-hint">Enter full amount in rupees. e.g. 3200000 for 32 Lakh</div>
+        <div id="priceDisplay"></div>
+      </div>
+
+      <div class="section-divider"><i class="fas fa-image" style="color:var(--primary)"></i> Photos</div>
+      <div class="form-group">
+        <label>Main Photo URL</label>
+        <input type="url" name="image_url" placeholder="https://example.com/car.jpg">
+        <div class="price-hint">Paste a direct image URL for your vehicle photo</div>
+      </div>
+
+      <div class="section-divider"><i class="fas fa-align-left" style="color:var(--primary)"></i> Description</div>
+      <div class="form-group">
+        <label>Description *</label>
+        <textarea name="description" required placeholder="Describe your vehicle — condition, features, history, reason for selling..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Post Ad Now — It's Free!</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function switchType(type) {
+  document.getElementById('adType').value = type;
+  document.getElementById('carBtn').classList.toggle('active', type==='car');
+  document.getElementById('bikeBtn').classList.toggle('active', type==='bike');
+  document.querySelectorAll('.car-only').forEach(el => el.style.opacity = type==='car' ? '1' : '.4');
+}
+function updatePrice(val) {
+  const n = parseInt(val);
+  if (!n) { document.getElementById('priceDisplay').textContent = ''; return; }
+  let txt = '';
+  if (n >= 10000000) txt = `PKR ${(n/10000000).toFixed(2)} Crore`;
+  else if (n >= 100000) txt = `PKR ${(n/100000).toFixed(1)} Lakh`;
+  else txt = `PKR ${n.toLocaleString()}`;
+  document.getElementById('priceDisplay').textContent = txt;
+}
+</script>
+{% endblock %}

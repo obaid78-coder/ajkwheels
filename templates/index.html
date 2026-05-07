@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block title %}AJK Wheels - Buy & Sell Cars in Pakistan{% endblock %}
+{% block extra_head %}
+<style>
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:70px 0 0;overflow:hidden;position:relative;}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:var(--surface2);clip-path:ellipse(55% 100% at 50% 100%);}
+.hero-inner{max-width:1280px;margin:auto;padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;}
+.hero-title{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;line-height:1.15;margin-bottom:16px;}
+.hero-title .red{color:var(--primary);}
+.hero-sub{font-size:16px;color:#aaa;margin-bottom:32px;line-height:1.8;}
+.hero-img{position:relative;padding-bottom:40px;}
+.hero-img img{width:100%;border-radius:20px 20px 0 0;object-fit:cover;height:340px;}
+.hero-img-badge{position:absolute;bottom:55px;left:-20px;background:#fff;color:var(--secondary);border-radius:12px;padding:12px 18px;box-shadow:var(--shadow-lg);font-size:13px;font-weight:700;}
+.hero-img-badge span{color:var(--primary);font-size:22px;display:block;font-family:'Syne',sans-serif;}
+
+/* SEARCH BOX */
+.search-box{background:#fff;border-radius:16px;padding:28px;box-shadow:var(--shadow-lg);margin:-20px 0 40px;position:relative;z-index:10;}
+.search-tabs{display:flex;gap:0;margin-bottom:20px;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;width:fit-content;}
+.search-tab{padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:inherit;}
+.search-tab.active{background:var(--primary);color:#fff;}
+.search-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:end;}
+.search-form select,.search-form input{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fff;font-family:inherit;width:100%;}
+.search-form select:focus,.search-form input:focus{outline:none;border-color:var(--primary);}
+
+/* STATS */
+.stats-bar{display:flex;justify-content:center;gap:50px;padding:30px 0;background:#fff;border-bottom:1px solid var(--border);}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--primary);}
+.stat-label{font-size:12px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
+
+/* MAKES */
+.makes-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;}
+.makes-scroll::-webkit-scrollbar{display:none;}
+.make-card{flex-shrink:0;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 22px;text-align:center;cursor:pointer;transition:all .2s;min-width:100px;}
+.make-card:hover{border-color:var(--primary);background:rgba(232,50,10,.04);transform:translateY(-2px);}
+.make-card img{height:36px;object-fit:contain;margin-bottom:8px;}
+.make-card span{display:block;font-size:12px;font-weight:600;color:var(--text);}
+
+/* FEATURED */
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;}
+.view-all{font-size:13px;font-weight:600;color:var(--primary);display:flex;align-items:center;gap:5px;}
+.view-all:hover{text-decoration:underline;}
+
+/* WHY US */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+.why-card{background:#fff;border-radius:var(--radius);padding:28px 22px;text-align:center;border:1px solid var(--border);transition:all .25s;}
+.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.why-icon{width:56px;height:56px;border-radius:14px;background:rgba(232,50,10,.08);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;}
+.why-card h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;color:var(--secondary);}
+.why-card p{font-size:13px;color:var(--text3);line-height:1.7;}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;padding:60px 20px;text-align:center;border-radius:20px;margin:0 20px;}
+.cta-section h2{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;margin-bottom:12px;}
+.cta-section p{font-size:16px;opacity:.85;margin-bottom:28px;}
+.btn-white{background:#fff;color:var(--primary);padding:13px 30px;border-radius:10px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-img{display:none;}
+  .hero-title{font-size:34px;}
+  .search-form{grid-template-columns:1fr 1fr;}
+  .why-grid{grid-template-columns:1fr 1fr;}
+  .stats-bar{gap:24px;}
+}
+@media(max-width:600px){
+  .search-form{grid-template-columns:1fr;}
+  .stats-bar{flex-wrap:wrap;gap:20px;}
+  .why-grid{grid-template-columns:1fr;}
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <p style="font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--primary);font-weight:600;margin-bottom:12px">Pakistan's #1 Auto Marketplace</p>
+      <h1 class="hero-title">Find Your Perfect <span class="red">Ride</span> in Pakistan</h1>
+      <p class="hero-sub">Browse thousands of verified cars & bikes. Trusted by over 2 million buyers & sellers nationwide.</p>
+      <div style="display:flex;gap:12px">
+        <a href="{{ url_for('cars') }}" class="btn btn-primary" style="padding:13px 28px;font-size:14px"><i class="fas fa-search"></i> Browse Cars</a>
+        <a href="{{ url_for('post_ad') }}" class="btn" style="background:rgba(255,255,255,.1);color:#fff;padding:13px 28px;font-size:14px;border:1.5px solid rgba(255,255,255,.2)"><i class="fas fa-plus-circle"></i> Sell My Car</a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=700&q=80" alt="Cars">
+      <div class="hero-img-badge"><span>{{ stats.cars }}+</span> Active Listings</div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<div class="container" style="margin-top:-20px;position:relative;z-index:20;">
+  <div class="search-box">
+    <div class="search-tabs">
+      <button class="search-tab active" onclick="setTab('cars',this)"><i class="fas fa-car"></i> Cars</button>
+      <button class="search-tab" onclick="setTab('bikes',this)"><i class="fas fa-motorcycle"></i> Bikes</button>
+    </div>
+    <form id="search-form" action="{{ url_for('cars') }}" method="GET">
+      <div class="search-form">
+        <select name="make">
+          <option value="">All Makes</option>
+          <option>Toyota</option><option>Honda</option><option>Suzuki</option>
+          <option>KIA</option><option>Hyundai</option><option>Changan</option>
+          <option>Proton</option><option>MG</option>
+        </select>
+        <select name="city">
+          <option value="">All Cities</option>
+          <option>Lahore</option><option>Karachi</option><option>Islamabad</option>
+          <option>Rawalpindi</option><option>Faisalabad</option><option>Multan</option><option>Peshawar</option>
+        </select>
+        <select name="max_price">
+          <option value="">Max Price</option>
+          <option value="1000000">10 Lakh</option>
+          <option value="2000000">20 Lakh</option>
+          <option value="3500000">35 Lakh</option>
+          <option value="5000000">50 Lakh</option>
+          <option value="10000000">1 Crore</option>
+        </select>
+        <input type="text" name="q" placeholder="e.g. Corolla 2022...">
+        <button type="submit" class="btn btn-primary" style="white-space:nowrap;height:42px"><i class="fas fa-search"></i> Search</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num">{{ stats.cars }}+</div><div class="stat-label">Used Cars</div></div>
+  <div class="stat-item"><div class="stat-num">{{ stats.bikes }}+</div><div class="stat-label">Bikes</div></div>
+  <div class="stat-item"><div class="stat-num">{{ stats.users }}+</div><div class="stat-label">Members</div></div>
+  <div class="stat-item"><div class="stat-num">35+</div><div class="stat-label">Cities</div></div>
+</div>
+
+<!-- MAKES -->
+<section class="section" style="padding-top:40px">
+  <div class="container">
+    <div class="section-header">
+      <div><div class="section-title">Browse by Make</div><div class="section-sub">Explore top automobile brands</div></div>
+    </div>
+    <div class="makes-scroll">
+      {% set makes = [('Toyota','#EB0A1E'),('Honda','#CC0000'),('Suzuki','#003087'),('KIA','#05141F'),('Hyundai','#002C5F'),('Changan','#C01820'),('Proton','#003791'),('MG','#B01C2E')] %}
+      {% for make, color in makes %}
+      <a href="{{ url_for('cars') }}?make={{ make }}" class="make-card">
+        <div style="width:50px;height:36px;background:{{ color }};border-radius:6px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Syne',sans-serif;font-size:11px;font-weight:800">{{ make[:3].upper() }}</div>
+        <span>{{ make }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED CARS -->
+<section class="section" style="padding-top:0;background:#fff;padding:40px 0;">
+  <div class="container">
+    <div class="section-header">
+      <div><div class="section-title">Featured Cars</div><div class="section-sub">Hand-picked quality listings</div></div>
+      <a href="{{ url_for('cars') }}" class="view-all">View All Cars <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="cars-grid">
+      {% for car in featured_cars %}
+      <a href="{{ url_for('car_detail', car_id=car.id) }}" class="car-card">
+        <div class="car-card-img">
+          <img src="{{ car.image_url }}" alt="{{ car.title }}" loading="lazy">
+          <div class="card-badges">
+            {% if car.is_featured %}<span class="badge badge-featured"><i class="fas fa-star"></i> Featured</span>{% endif %}
+            <span class="badge {{ 'badge-new' if car.condition=='New' else 'badge-used' }}">{{ car.condition }}</span>
+          </div>
+          <button class="card-fav" onclick="event.preventDefault();toggleFav(this)"><i class="far fa-heart"></i></button>
+        </div>
+        <div class="car-card-body">
+          <h3>{{ car.title }}</h3>
+          <div class="car-price">PKR {{ car.price|fmt_price }} <span>/ Negotiable</span></div>
+          <div class="car-meta">
+            <span class="tag"><i class="fas fa-tachometer-alt"></i> {{ car.mileage|fmt_num }} km</span>
+            <span class="tag"><i class="fas fa-gas-pump"></i> {{ car.fuel_type }}</span>
+            <span class="tag"><i class="fas fa-cog"></i> {{ car.transmission }}</span>
+          </div>
+          <div class="car-location"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> {{ car.city }} &bull; {{ car.year }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED BIKES -->
+{% if featured_bikes %}
+<section class="section" style="padding:40px 0;">
+  <div class="container">
+    <div class="section-header">
+      <div><div class="section-title">Featured Bikes</div><div class="section-sub">Top motorcycle listings</div></div>
+      <a href="{{ url_for('bikes') }}" class="view-all">View All Bikes <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="cars-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+      {% for bike in featured_bikes %}
+      <a href="{{ url_for('bike_detail', bike_id=bike.id) }}" class="car-card">
+        <div class="car-card-img">
+          <img src="{{ bike.image_url }}" alt="{{ bike.title }}" loading="lazy">
+          <div class="card-badges"><span class="badge badge-featured"><i class="fas fa-motorcycle"></i> Bike</span></div>
+        </div>
+        <div class="car-card-body">
+          <h3>{{ bike.title }}</h3>
+          <div class="car-price">PKR {{ bike.price|fmt_price }}</div>
+          <div class="car-meta">
+            <span class="tag"><i class="fas fa-tachometer-alt"></i> {{ bike.mileage|fmt_num }} km</span>
+            <span class="tag"><i class="fas fa-cogs"></i> {{ bike.engine_cc }}cc</span>
+          </div>
+          <div class="car-location"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> {{ bike.city }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- WHY US -->
+<section class="section" style="background:#fff;padding:60px 0;">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:40px">
+      <div class="section-title">Why Choose AJK Wheels?</div>
+      <div class="section-sub">Pakistan's most trusted auto marketplace</div>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><i class="fas fa-shield-alt"></i></div><h3>Verified Listings</h3><p>All ads are manually reviewed for authenticity and accuracy before going live.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-search-dollar"></i></div><h3>Price Insights</h3><p>Get real market price data to make informed buying and selling decisions.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-exchange-alt"></i></div><h3>Car Compare</h3><p>Compare multiple vehicles side-by-side with detailed specs and features.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-bolt"></i></div><h3>Fast & Easy</h3><p>Post your ad in under 3 minutes and reach thousands of buyers instantly.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:60px 0;">
+  <div class="cta-section">
+    <h2>Ready to Sell Your Car?</h2>
+    <p>Post a free ad today and connect with thousands of genuine buyers across Pakistan</p>
+    <a href="{{ url_for('post_ad') }}" class="btn-white"><i class="fas fa-plus-circle"></i> Post Free Ad Now</a>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function setTab(type, el) {
+  document.querySelectorAll('.search-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('search-form').action = type === 'cars' ? '{{ url_for("cars") }}' : '{{ url_for("bikes") }}';
+}
+function toggleFav(btn) {
+  const icon = btn.querySelector('i');
+  icon.classList.toggle('far');
+  icon.classList.toggle('fas');
+  icon.style.color = icon.classList.contains('fas') ? 'var(--primary)' : '';
+}
+</script>
+{% endblock %}

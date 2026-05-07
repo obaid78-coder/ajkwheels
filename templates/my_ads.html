@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}My Ads - AJK Wheels{% endblock %}
+{% block extra_head %}
+<style>
+.myads-hero{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:36px 0;}
+.myads-hero h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;}
+.ads-tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:24px;background:#fff;}
+.ads-tab{padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;font-family:inherit;transition:all .2s;}
+.ads-tab.active{background:var(--primary);color:#fff;}
+.ad-table{width:100%;background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.ad-table table{width:100%;border-collapse:collapse;}
+.ad-table th{background:var(--surface2);padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:left;color:var(--text2);}
+.ad-table td{padding:14px 16px;border-top:1px solid var(--surface3);vertical-align:middle;font-size:13px;}
+.ad-table tr:hover td{background:var(--surface2);}
+.ad-thumb{width:70px;height:52px;border-radius:8px;object-fit:cover;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.status-active{background:#d1fae5;color:#065f46;}
+.status-inactive{background:#fee2e2;color:#991b1b;}
+.del-btn{background:transparent;border:1px solid #fca5a5;color:#dc2626;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.del-btn:hover{background:#fee2e2;}
+.empty-state{text-align:center;padding:60px 20px;background:#fff;border-radius:var(--radius);}
+</style>
+{% endblock %}
+{% block content %}
+<div class="myads-hero">
+  <div class="container">
+    <h1><i class="fas fa-list" style="color:var(--primary)"></i> My Ads</h1>
+    <p style="color:#aaa;margin-top:6px">Manage all your vehicle listings</p>
+  </div>
+</div>
+<div class="container" style="margin-top:28px;margin-bottom:60px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div class="ads-tabs">
+      <button class="ads-tab active" onclick="showTab('cars',this)"><i class="fas fa-car"></i> Cars ({{ my_cars|length }})</button>
+      <button class="ads-tab" onclick="showTab('bikes',this)"><i class="fas fa-motorcycle"></i> Bikes ({{ my_bikes|length }})</button>
+    </div>
+    <a href="{{ url_for('post_ad') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Post New Ad</a>
+  </div>
+
+  <div id="tab-cars">
+    {% if my_cars %}
+    <div class="ad-table">
+      <table>
+        <thead><tr><th>Photo</th><th>Title</th><th>Price</th><th>City</th><th>Views</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          {% for car in my_cars %}
+          <tr>
+            <td><img src="{{ car.image_url }}" alt="" class="ad-thumb"></td>
+            <td><a href="{{ url_for('car_detail', car_id=car.id) }}" style="font-weight:600;color:var(--secondary)">{{ car.title }}</a><br><span style="font-size:11px;color:var(--text3)">{{ car.created_at[:10] }}</span></td>
+            <td style="font-weight:700;color:var(--primary)">PKR {{ car.price|fmt_price }}</td>
+            <td>{{ car.city }}</td>
+            <td>{{ car.views }}</td>
+            <td><span class="status-badge {{ 'status-active' if car.status=='active' else 'status-inactive' }}">{{ car.status.title() }}</span></td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_ad', type='car', ad_id=car.id) }}" onsubmit="return confirm('Delete this ad?')">
+                <button type="submit" class="del-btn"><i class="fas fa-trash"></i> Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="fas fa-car" style="font-size:48px;color:var(--border);display:block;margin-bottom:12px"></i><h3 style="font-family:'Syne',sans-serif;color:var(--text2)">No car ads yet</h3><p style="color:var(--text3);font-size:14px;margin-top:6px">Post your first car ad for free</p><a href="{{ url_for('post_ad') }}" class="btn btn-primary" style="margin-top:14px">Post Ad</a></div>
+    {% endif %}
+  </div>
+
+  <div id="tab-bikes" style="display:none">
+    {% if my_bikes %}
+    <div class="ad-table">
+      <table>
+        <thead><tr><th>Photo</th><th>Title</th><th>Price</th><th>City</th><th>Views</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          {% for bike in my_bikes %}
+          <tr>
+            <td><img src="{{ bike.image_url }}" alt="" class="ad-thumb"></td>
+            <td><a href="{{ url_for('bike_detail', bike_id=bike.id) }}" style="font-weight:600;color:var(--secondary)">{{ bike.title }}</a><br><span style="font-size:11px;color:var(--text3)">{{ bike.created_at[:10] }}</span></td>
+            <td style="font-weight:700;color:var(--primary)">PKR {{ bike.price|fmt_price }}</td>
+            <td>{{ bike.city }}</td>
+            <td>{{ bike.views }}</td>
+            <td><span class="status-badge status-active">Active</span></td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_ad', type='bike', ad_id=bike.id) }}" onsubmit="return confirm('Delete this ad?')">
+                <button type="submit" class="del-btn"><i class="fas fa-trash"></i> Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="fas fa-motorcycle" style="font-size:48px;color:var(--border);display:block;margin-bottom:12px"></i><h3 style="font-family:'Syne',sans-serif;color:var(--text2)">No bike ads yet</h3><a href="{{ url_for('post_ad') }}" class="btn btn-primary" style="margin-top:14px">Post Bike Ad</a></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function showTab(tab, el) {
+  document.querySelectorAll('.ads-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-cars').style.display = tab==='cars' ? 'block' : 'none';
+  document.getElementById('tab-bikes').style.display = tab==='bikes' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

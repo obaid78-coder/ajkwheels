@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}AJK Wheels - Pakistan's Best Auto Marketplace{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary: #e8320a;
+  --primary-dark: #c02500;
+  --primary-light: #ff5a36;
+  --secondary: #1a1a2e;
+  --accent: #f59e0b;
+  --surface: #ffffff;
+  --surface2: #f8f7f5;
+  --surface3: #eeecea;
+  --text: #1a1a1a;
+  --text2: #555;
+  --text3: #888;
+  --border: #e0ddd8;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface2);line-height:1.6;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;}
+
+/* ── NAV ── */
+.topbar{background:var(--secondary);color:#fff;padding:6px 0;font-size:12px;}
+.topbar-inner{max-width:1280px;margin:auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;}
+.topbar a{color:#ccc;margin-left:16px;}
+.topbar a:hover{color:#fff;}
+
+nav{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);position:sticky;top:0;z-index:1000;}
+.nav-inner{max-width:1280px;margin:auto;padding:0 20px;display:flex;align-items:center;gap:8px;height:64px;}
+.logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--primary);margin-right:auto;display:flex;align-items:center;gap:8px;}
+.logo-icon{background:var(--primary);color:#fff;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.logo span{color:var(--secondary);}
+
+.nav-links{display:flex;align-items:center;gap:4px;}
+.nav-links a{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text2);transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{background:var(--surface2);color:var(--primary);}
+.nav-links .dropdown{position:relative;}
+.nav-links .dropdown-menu{display:none;position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:8px;min-width:180px;box-shadow:var(--shadow-lg);z-index:100;}
+.nav-links .dropdown:hover .dropdown-menu{display:block;}
+.nav-links .dropdown-menu a{display:block;padding:8px 12px;border-radius:8px;font-size:13px;}
+.nav-links .dropdown-menu a:hover{background:var(--surface2);}
+
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:8px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:inherit;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+
+/* ── FLASH MSGS ── */
+.flash-container{max-width:1280px;margin:12px auto;padding:0 20px;}
+.flash{padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:8px;font-size:14px;display:flex;align-items:center;gap:10px;}
+.flash.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}
+.flash.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.flash.warning{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+.flash.info{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;}
+
+/* ── FOOTER ── */
+footer{background:var(--secondary);color:#aaa;margin-top:60px;}
+.footer-top{max-width:1280px;margin:auto;padding:50px 20px 30px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;}
+.footer-brand .logo{color:#fff;margin-bottom:12px;}
+.footer-brand .logo span{color:#aaa;}
+.footer-brand p{font-size:13px;line-height:1.8;color:#888;max-width:280px;}
+.footer-col h4{color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;margin-bottom:16px;text-transform:uppercase;}
+.footer-col a{display:block;font-size:13px;color:#888;margin-bottom:8px;transition:color .2s;}
+.footer-col a:hover{color:var(--primary);}
+.footer-bottom{border-top:1px solid #2a2a45;padding:20px;text-align:center;font-size:12px;color:#555;}
+.social-links{display:flex;gap:10px;margin-top:16px;}
+.social-links a{width:34px;height:34px;border-radius:8px;background:#2a2a45;color:#aaa;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;}
+.social-links a:hover{background:var(--primary);color:#fff;}
+
+/* ── UTILITIES ── */
+.container{max-width:1280px;margin:auto;padding:0 20px;}
+.section{padding:60px 0;}
+.section-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--secondary);}
+.section-sub{color:var(--text3);font-size:14px;margin-top:4px;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.badge-featured{background:#fef3c7;color:#92400e;}
+.badge-new{background:#d1fae5;color:#065f46;}
+.badge-used{background:#f1f5f9;color:#475569;}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:12px;background:var(--surface3);color:var(--text2);}
+
+/* ── CARDS ── */
+.car-card{background:#fff;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:all .25s;position:relative;}
+.car-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:transparent;}
+.car-card-img{height:195px;overflow:hidden;position:relative;background:#f1f1f1;}
+.car-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.car-card:hover .car-card-img img{transform:scale(1.06);}
+.card-badges{position:absolute;top:10px;left:10px;display:flex;gap:5px;z-index:2;}
+.card-fav{position:absolute;top:10px;right:10px;width:30px;height:30px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;border:none;z-index:2;}
+.card-fav:hover{background:var(--primary);color:#fff;}
+.car-card-body{padding:14px;}
+.car-card-body h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.car-price{font-size:20px;font-weight:800;color:var(--primary);font-family:'Syne',sans-serif;margin-bottom:10px;}
+.car-price span{font-size:12px;color:var(--text3);font-weight:400;font-family:'DM Sans',sans-serif;}
+.car-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.car-location{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);padding-top:8px;border-top:1px solid var(--surface3);}
+
+/* ── GRID ── */
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:40px;}
+.page-btn{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:all .2s;color:var(--text);}
+.page-btn:hover,.page-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* ── FORM ── */
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;background:#fff;color:var(--text);transition:border-color .2s,box-shadow .2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(232,50,10,.1);}
+.form-group textarea{resize:vertical;min-height:110px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .nav-links,.nav-actions .btn-outline{display:none;}
+}
+@media(max-width:600px){
+  .footer-top{grid-template-columns:1fr;}
+  .cars-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:400px){
+  .cars-grid{grid-template-columns:1fr;}
+}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div><i class="fas fa-phone-alt" style="color:var(--primary)"></i> 0800-AJKWHEELS &nbsp;|&nbsp; <i class="fas fa-envelope"></i> info@ajkwheels.com</div>
+    <div>
+      {% if session.user_id %}
+        <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> {{ session.user_name }}</a>
+        <a href="{{ url_for('my_ads') }}"><i class="fas fa-list"></i> My Ads</a>
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> Register</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="{{ url_for('index') }}" class="logo">
+      <div class="logo-icon"><i class="fas fa-car"></i></div>
+      AJK<span>Wheels</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" class="{% if request.endpoint=='index' %}active{% endif %}">Home</a>
+      <div class="dropdown">
+        <a href="{{ url_for('cars') }}" class="{% if 'car' in (request.endpoint or '') %}active{% endif %}">Cars <i class="fas fa-chevron-down" style="font-size:10px"></i></a>
+        <div class="dropdown-menu">
+          <a href="{{ url_for('cars') }}?make=Toyota">Toyota</a>
+          <a href="{{ url_for('cars') }}?make=Honda">Honda</a>
+          <a href="{{ url_for('cars') }}?make=Suzuki">Suzuki</a>
+          <a href="{{ url_for('cars') }}?make=KIA">KIA</a>
+          <a href="{{ url_for('cars') }}">All Cars</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a href="{{ url_for('bikes') }}" class="{% if 'bike' in (request.endpoint or '') %}active{% endif %}">Bikes <i class="fas fa-chevron-down" style="font-size:10px"></i></a>
+        <div class="dropdown-menu">
+          <a href="{{ url_for('bikes') }}?make=Honda">Honda</a>
+          <a href="{{ url_for('bikes') }}?make=Yamaha">Yamaha</a>
+          <a href="{{ url_for('bikes') }}">All Bikes</a>
+        </div>
+      </div>
+      <a href="{{ url_for('compare') }}">Compare</a>
+    </div>
+    <div class="nav-actions">
+      {% if session.user_id %}
+        <a href="{{ url_for('post_ad') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Post Ad</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
+        <a href="{{ url_for('post_ad') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Post Ad</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}"><i class="fas fa-{% if cat=='success' %}check-circle{% elif cat=='error' %}exclamation-circle{% else %}info-circle{% endif %}"></i> {{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;">
+        <div style="background:var(--primary);color:#fff;width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center"><i class="fas fa-car" style="font-size:15px"></i></div>
+        AJK<span style="color:#aaa">Wheels</span>
+      </div>
+      <p style="margin-top:10px">Pakistan's fastest growing auto marketplace. Buy, sell and compare new & used cars and bikes with confidence.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Cars</h4>
+      <a href="{{ url_for('cars') }}">Used Cars</a>
+      <a href="{{ url_for('cars') }}">New Cars</a>
+      <a href="{{ url_for('cars') }}?make=Toyota">Toyota</a>
+      <a href="{{ url_for('cars') }}?make=Honda">Honda</a>
+      <a href="{{ url_for('cars') }}?make=Suzuki">Suzuki</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="{{ url_for('post_ad') }}">Post Free Ad</a>
+      <a href="{{ url_for('compare') }}">Compare Cars</a>
+      <a href="#">Inspection</a>
+      <a href="#">Financing</a>
+      <a href="#">Insurance</a>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <a href="#">About Us</a>
+      <a href="#">Contact Us</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Sitemap</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2024 AJK Wheels. All rights reserved. Made with <i class="fas fa-heart" style="color:var(--primary)"></i> in Pakistan
+  </div>
+</footer>
+<script>
+// Auto close flash messages
+setTimeout(()=>{ document.querySelectorAll('.flash').forEach(f=>f.style.opacity='0'); }, 4000);
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

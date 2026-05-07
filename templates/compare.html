@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block title %}Compare Cars - AJK Wheels{% endblock %}
+{% block extra_head %}
+<style>
+.compare-hero{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:40px 0;}
+.compare-hero h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;}
+.compare-hero p{color:#aaa;font-size:14px;margin-top:6px;}
+.compare-wrap{max-width:1100px;margin:0 auto;padding:40px 20px 80px;}
+.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px;}
+.slot{background:#fff;border-radius:var(--radius);border:2px dashed var(--border);min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;padding:20px;position:relative;text-align:center;}
+.slot:hover{border-color:var(--primary);background:rgba(232,50,10,.02);}
+.slot.filled{border-style:solid;border-color:var(--border);cursor:default;padding:0;overflow:hidden;}
+.slot-placeholder i{font-size:36px;color:var(--border);display:block;margin-bottom:12px;}
+.slot-placeholder p{font-size:13px;color:var(--text3);}
+.slot-placeholder strong{display:block;font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.slot-img{width:100%;height:160px;object-fit:cover;}
+.slot-info{padding:14px;}
+.slot-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--secondary);margin-bottom:4px;}
+.slot-price{font-size:18px;font-weight:800;color:var(--primary);font-family:'Syne',sans-serif;}
+.remove-slot{position:absolute;top:8px;right:8px;width:26px;height:26px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:12px;z-index:10;}
+.remove-slot:hover{background:var(--primary);}
+.compare-table{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.compare-table table{width:100%;border-collapse:collapse;}
+.compare-table th{background:var(--surface2);padding:14px 18px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);text-align:left;}
+.compare-table td{padding:14px 18px;border-top:1px solid var(--surface3);font-size:14px;vertical-align:middle;}
+.compare-table tr:hover td{background:var(--surface2);}
+.spec-label{font-weight:600;color:var(--text);min-width:140px;}
+.spec-val{color:var(--text2);}
+.spec-val.best{color:#059669;font-weight:700;}
+.search-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;}
+.search-modal.show{display:flex;}
+.modal-box{background:#fff;border-radius:20px;padding:28px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;}
+.modal-box h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px;}
+.modal-search{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;margin-bottom:16px;}
+.modal-search:focus{outline:none;border-color:var(--primary);}
+.car-result{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.car-result:hover{background:var(--surface2);}
+.car-result img{width:60px;height:44px;border-radius:6px;object-fit:cover;flex-shrink:0;}
+.car-result-info h4{font-size:14px;font-weight:700;color:var(--secondary);}
+.car-result-info p{font-size:12px;color:var(--text3);margin-top:2px;}
+@media(max-width:700px){.slot-grid{grid-template-columns:1fr 1fr;}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="compare-hero">
+  <div class="container">
+    <h1><i class="fas fa-exchange-alt" style="color:var(--primary)"></i> Compare Cars</h1>
+    <p>Select up to 3 cars to compare side-by-side</p>
+  </div>
+</div>
+
+<div class="compare-wrap">
+  <div class="slot-grid" id="slotGrid">
+    <div class="slot" id="slot0" onclick="openModal(0)">
+      <div class="slot-placeholder">
+        <i class="fas fa-plus-circle"></i>
+        <strong>Add Car</strong>
+        <p>Click to pick a car</p>
+      </div>
+    </div>
+    <div class="slot" id="slot1" onclick="openModal(1)">
+      <div class="slot-placeholder">
+        <i class="fas fa-plus-circle"></i>
+        <strong>Add Car</strong>
+        <p>Click to pick a car</p>
+      </div>
+    </div>
+    <div class="slot" id="slot2" onclick="openModal(2)">
+      <div class="slot-placeholder">
+        <i class="fas fa-plus-circle"></i>
+        <strong>Add Car</strong>
+        <p>Click to pick a car</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="compareTableWrap" style="display:none">
+    <div class="compare-table">
+      <table id="compareTable">
+        <thead>
+          <tr>
+            <th>Specification</th>
+            <th id="th0">Car 1</th>
+            <th id="th1">Car 2</th>
+            <th id="th2">Car 3</th>
+          </tr>
+        </thead>
+        <tbody id="compareBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="search-modal" id="searchModal">
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3>Select a Car</h3>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);">&times;</button>
+    </div>
+    <input type="text" class="modal-search" id="modalSearch" placeholder="Search by name, make, model..." oninput="searchCars(this.value)">
+    <div id="carResults"></div>
+  </div>
+</div>
+
+<script>
+let selectedSlot = 0;
+let carsData = {};
+let allCars = [];
+
+// Load all cars
+fetch('/cars?format=json').then(()=>{});
+loadAllCars();
+
+async function loadAllCars() {
+  try {
+    const r = await fetch('/api/search-suggestions?q=');
+    // We'll search by empty string to get suggestions
+  } catch(e) {}
+  // Load via XHR from our own listing
+  const r = await fetch('/api/search-suggestions?q=a');
+  const data = await r.json();
+}
+
+async function searchCars(q) {
+  if (q.length < 1) { document.getElementById('carResults').innerHTML=''; return; }
+  const r = await fetch(`/api/search-suggestions?q=${encodeURIComponent(q)}`);
+  const items = await r.json();
+  const resultsDiv = document.getElementById('carResults');
+  if (!items.length) { resultsDiv.innerHTML='<p style="color:var(--text3);text-align:center;padding:20px">No results found</p>'; return; }
+  resultsDiv.innerHTML = items.map(item => `
+    <div class="car-result" onclick="selectCar(${JSON.stringify(item).replace(/"/g,'&quot;')})">
+      <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=120&q=60" alt="">
+      <div class="car-result-info">
+        <h4>${item.title}</h4>
+        <p>${item.type.toUpperCase()}</p>
+      </div>
+    </div>`).join('');
+}
+
+async function selectCar(item) {
+  // Get full car data - for demo we fill with mock
+  const mockData = {
+    title: item.title,
+    make: item.title.split(' ')[0],
+    model: item.title.split(' ')[1] || '',
+    year: 2022,
+    price: 3200000,
+    mileage: 15000,
+    fuel_type: 'Petrol',
+    transmission: 'Automatic',
+    engine_cc: 1300,
+    color: 'White',
+    city: 'Lahore',
+    condition: 'Used',
+    image_url: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&q=80'
+  };
+  carsData[selectedSlot] = mockData;
+  fillSlot(selectedSlot, mockData);
+  closeModal();
+  updateTable();
+}
+
+function fillSlot(idx, car) {
+  const slot = document.getElementById('slot'+idx);
+  slot.classList.add('filled');
+  slot.onclick = null;
+  slot.innerHTML = `
+    <button class="remove-slot" onclick="removeSlot(${idx})"><i class="fas fa-times"></i></button>
+    <img src="${car.image_url}" class="slot-img" alt="">
+    <div class="slot-info">
+      <div class="slot-title">${car.title}</div>
+      <div class="slot-price">PKR ${formatPrice(car.price)}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">${car.city} • ${car.year}</div>
+    </div>`;
+}
+
+function removeSlot(idx) {
+  delete carsData[idx];
+  const slot = document.getElementById('slot'+idx);
+  slot.classList.remove('filled');
+  slot.innerHTML = `<div class="slot-placeholder"><i class="fas fa-plus-circle"></i><strong>Add Car</strong><p>Click to pick a car</p></div>`;
+  slot.onclick = () => openModal(idx);
+  updateTable();
+}
+
+function updateTable() {
+  const keys = Object.keys(carsData);
+  if (keys.length < 2) { document.getElementById('compareTableWrap').style.display='none'; return; }
+  document.getElementById('compareTableWrap').style.display='block';
+  const specs = ['make','model','year','price','mileage','fuel_type','transmission','engine_cc','color','city','condition'];
+  const labels = ['Make','Model','Year','Price (PKR)','Mileage (km)','Fuel Type','Transmission','Engine (cc)','Color','City','Condition'];
+  const prices = keys.map(k => carsData[k].price);
+  const mileages = keys.map(k => carsData[k].mileage);
+  let rows = '';
+  specs.forEach((spec, i) => {
+    let cells = '<td class="spec-label">'+labels[i]+'</td>';
+    [0,1,2].forEach(idx => {
+      const car = carsData[idx];
+      if (!car) { cells += '<td style="color:var(--border)">—</td>'; return; }
+      let val = car[spec];
+      if (spec==='price') val = 'PKR '+formatPrice(val);
+      if (spec==='mileage') val = val.toLocaleString()+' km';
+      if (spec==='engine_cc') val = val+' cc';
+      let cls = '';
+      if (spec==='price' && car.price===Math.min(...prices)) cls='best';
+      if (spec==='mileage' && car.mileage===Math.min(...mileages)) cls='best';
+      cells += `<td class="spec-val ${cls}">${val||'—'}</td>`;
+    });
+    rows += '<tr>'+cells+'</tr>';
+  });
+  document.getElementById('compareBody').innerHTML = rows;
+}
+
+function formatPrice(p) {
+  if (p>=10000000) return (p/10000000).toFixed(1)+' Crore';
+  if (p>=100000) return (p/100000).toFixed(1)+' Lakh';
+  return p.toLocaleString();
+}
+
+function openModal(idx) { selectedSlot=idx; document.getElementById('searchModal').classList.add('show'); document.getElementById('modalSearch').focus(); }
+function closeModal() { document.getElementById('searchModal').classList.remove('show'); document.getElementById('modalSearch').value=''; document.getElementById('carResults').innerHTML=''; }
+document.getElementById('searchModal').addEventListener('click', e => { if(e.target===document.getElementById('searchModal')) closeModal(); });
+</script>
+{% endblock %}

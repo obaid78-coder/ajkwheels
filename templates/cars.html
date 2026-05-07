@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Used Cars for Sale in Pakistan - AJK Wheels{% endblock %}
+{% block extra_head %}
+<style>
+.page-header{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:36px 0;}
+.page-header h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;}
+.page-header p{color:#aaa;font-size:14px;margin-top:6px;}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:#888;margin-bottom:12px;}
+.breadcrumb a{color:#aaa;}
+.breadcrumb a:hover{color:#fff;}
+
+.listing-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;margin-top:28px;}
+.sidebar{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:20px;height:fit-content;position:sticky;top:80px;}
+.filter-section{margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--surface3);}
+.filter-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.filter-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;}
+.filter-section select,.filter-section input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#fff;}
+.filter-section select:focus,.filter-section input:focus{outline:none;border-color:var(--primary);}
+.price-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.apply-btn{width:100%;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px;}
+.apply-btn:hover{background:var(--primary-dark);}
+.clear-link{display:block;text-align:center;font-size:12px;color:var(--text3);margin-top:10px;cursor:pointer;}
+.clear-link:hover{color:var(--primary);}
+
+.listing-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.result-count{font-size:14px;color:var(--text2);}
+.result-count strong{color:var(--text);}
+.sort-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:#fff;}
+.sort-select:focus{outline:none;border-color:var(--primary);}
+
+.active-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.filter-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(232,50,10,.08);border:1px solid rgba(232,50,10,.2);border-radius:20px;font-size:12px;color:var(--primary);cursor:pointer;}
+.filter-tag:hover{background:rgba(232,50,10,.15);}
+
+@media(max-width:900px){.listing-layout{grid-template-columns:1fr;}.sidebar{display:none;}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ url_for('index') }}">Home</a> <i class="fas fa-chevron-right" style="font-size:10px"></i> Cars</div>
+    <h1>Used Cars for Sale in Pakistan</h1>
+    <p>{{ total }} verified listings from trusted sellers across Pakistan</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="listing-layout">
+    <!-- SIDEBAR FILTERS -->
+    <aside class="sidebar">
+      <form method="GET">
+        <div class="filter-section">
+          <div class="filter-title"><i class="fas fa-sliders-h"></i> Filters</div>
+          <input type="text" name="q" placeholder="Search keyword..." value="{{ args.get('q','') }}">
+        </div>
+        <div class="filter-section">
+          <div class="filter-title">Make</div>
+          <select name="make">
+            <option value="">All Makes</option>
+            {% for m in makes %}<option value="{{ m.make }}" {% if args.get('make')==m.make %}selected{% endif %}>{{ m.make }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="filter-section">
+          <div class="filter-title">City</div>
+          <select name="city">
+            <option value="">All Cities</option>
+            {% for c in cities %}<option value="{{ c.city }}" {% if args.get('city')==c.city %}selected{% endif %}>{{ c.city }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="filter-section">
+          <div class="filter-title">Price (PKR)</div>
+          <div class="price-row">
+            <input type="number" name="min_price" placeholder="Min" value="{{ args.get('min_price','') }}">
+            <input type="number" name="max_price" placeholder="Max" value="{{ args.get('max_price','') }}">
+          </div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-title">Year From</div>
+          <select name="year_from">
+            <option value="">Any Year</option>
+            {% for y in range(2024,2010,-1) %}<option value="{{ y }}" {% if args.get('year_from')==y|string %}selected{% endif %}>{{ y }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="filter-section">
+          <div class="filter-title">Transmission</div>
+          <select name="transmission">
+            <option value="">Any</option>
+            <option value="Automatic" {% if args.get('transmission')=='Automatic' %}selected{% endif %}>Automatic</option>
+            <option value="Manual" {% if args.get('transmission')=='Manual' %}selected{% endif %}>Manual</option>
+          </select>
+        </div>
+        <button type="submit" class="apply-btn"><i class="fas fa-search"></i> Apply Filters</button>
+        <a href="{{ url_for('cars') }}" class="clear-link">Clear All Filters</a>
+      </form>
+    </aside>
+
+    <!-- LISTINGS -->
+    <main>
+      <div class="listing-header">
+        <div class="result-count">Showing <strong>{{ cars|length }}</strong> of <strong>{{ total }}</strong> cars</div>
+        <form method="GET" style="display:inline">
+          {% for k,v in args.items() %}{% if k != 'sort' %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}{% endfor %}
+          <select name="sort" class="sort-select" onchange="this.form.submit()">
+            <option value="newest" {% if args.get('sort','newest')=='newest' %}selected{% endif %}>Newest First</option>
+            <option value="price_low" {% if args.get('sort')=='price_low' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_high" {% if args.get('sort')=='price_high' %}selected{% endif %}>Price: High to Low</option>
+            <option value="mileage" {% if args.get('sort')=='mileage' %}selected{% endif %}>Lowest Mileage</option>
+          </select>
+        </form>
+      </div>
+
+      {% if not cars %}
+      <div style="text-align:center;padding:80px 20px;background:#fff;border-radius:var(--radius);">
+        <i class="fas fa-car" style="font-size:50px;color:var(--border);display:block;margin-bottom:16px"></i>
+        <h3 style="font-family:'Syne',sans-serif;color:var(--text2)">No cars found</h3>
+        <p style="color:var(--text3);font-size:14px;margin-top:8px">Try adjusting your filters</p>
+        <a href="{{ url_for('cars') }}" class="btn btn-primary" style="margin-top:16px">Clear Filters</a>
+      </div>
+      {% else %}
+      <div class="cars-grid">
+        {% for car in cars %}
+        <a href="{{ url_for('car_detail', car_id=car.id) }}" class="car-card">
+          <div class="car-card-img">
+            <img src="{{ car.image_url }}" alt="{{ car.title }}" loading="lazy">
+            <div class="card-badges">
+              {% if car.is_featured %}<span class="badge badge-featured"><i class="fas fa-star"></i> Featured</span>{% endif %}
+              <span class="badge {{ 'badge-new' if car.condition=='New' else 'badge-used' }}">{{ car.condition }}</span>
+            </div>
+            <button class="card-fav" onclick="event.preventDefault()"><i class="far fa-heart"></i></button>
+          </div>
+          <div class="car-card-body">
+            <h3>{{ car.title }}</h3>
+            <div class="car-price">PKR {{ car.price|fmt_price }}</div>
+            <div class="car-meta">
+              <span class="tag"><i class="fas fa-tachometer-alt"></i> {{ car.mileage|fmt_num }} km</span>
+              <span class="tag"><i class="fas fa-gas-pump"></i> {{ car.fuel_type }}</span>
+              <span class="tag"><i class="fas fa-cog"></i> {{ car.transmission }}</span>
+            </div>
+            <div class="car-location"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> {{ car.city }} &bull; {{ car.year }}</div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+      <!-- PAGINATION -->
+      {% set total_pages = ((total - 1) // per_page + 1) %}
+      {% if total_pages > 1 %}
+      <div class="pagination">
+        {% if page > 1 %}
+        <a href="?{{ args.to_dict()|urlencode }}&page={{ page-1 }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
+        {% endif %}
+        {% for p in range(1, total_pages+1) %}
+          {% if p == page or p == 1 or p == total_pages or (p >= page-1 and p <= page+1) %}
+            <a href="?{{ args.to_dict()|urlencode }}&page={{ p }}" class="page-btn {% if p == page %}active{% endif %}">{{ p }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if page < total_pages %}
+        <a href="?{{ args.to_dict()|urlencode }}&page={{ page+1 }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endif %}
+    </main>
+  </div>
+</div>
+{% endblock %}
